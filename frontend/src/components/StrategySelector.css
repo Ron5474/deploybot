@@ -1,0 +1,116 @@
+.strategy-selector {
+  position: relative;
+}
+
+.strategy-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 10px 4px 8px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.strategy-pill:hover,
+.strategy-pill--open {
+  border-color: var(--accent);
+}
+
+.strategy-pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.strategy-pill-label {
+  color: var(--text-dim);
+  font-size: 10px;
+}
+
+.strategy-pill-value {
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.strategy-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 100;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  width: 230px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.strategy-item {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  text-align: left;
+}
+
+.strategy-item:hover,
+.strategy-item--selected {
+  background: var(--bg-tertiary);
+}
+
+.strategy-item-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.strategy-item-icon--regular          { background: rgba(14,165,233,0.15);  color: var(--accent); }
+.strategy-item-icon--self-reflection  { background: rgba(139,92,246,0.15);  color: #8b5cf6; }
+.strategy-item-icon--meta-prompting   { background: rgba(245,158,11,0.15);  color: #f59e0b; }
+.strategy-item-icon--prompt-chaining  { background: rgba(16,185,129,0.15);  color: #10b981; }
+
+.strategy-item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.strategy-item-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.strategy-item-desc {
+  font-size: 10px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
+
+.strategy-item-check {
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
