@@ -1,0 +1,13 @@
+.env
+.git/
+apps.db
+conversation_history.db
+.langchain_cache.db
+rag/chroma_db/
+data/readme_cache/
+frontend/node_modules/
+frontend/dist/
+__pycache__/
+*.pyc
+*.pyo
+.venv/

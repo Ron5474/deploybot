@@ -1,0 +1,23 @@
+
+QUERIES = [
+        "Generate a compose file for Gitea with PostgreSQL",
+        "Does Immich have any recent CVEs?",
+        "How do I set up NextCloud?",
+        "What dependencies does VaultWarden need?",
+        "What environment variables do I need for WireGuard?",
+        "What are the resource requirements for Jellyfin vs Plex?",
+        "I am looking for an open source media player that can play most videos or audios without requiring extra codecs.",
+        "What are the main differences between Joplin and Obsidian?",
+        "How can I configure SSO/OAuth for Authentik with my other self-hosted apps?",
+        "How does the Sonarr/Radarr with Prowlarr and Jellyfin work? Where does someone source the media content?",
+        "My NextCloud container keeps restarting, what could be the common causes for this?",
+        "Are there any known vulnerabilities in the latest version of NextCloud?",
+        "What security hardening steps should I take after deploying VaultWarden?",
+        "I have the following message on my admin dashboard for VaultWarden, what does it mean and what steps should I take? message: “You are using a plain text ADMIN_TOKEN which is insecure. Please generate a secure Argon2 PHC string by using vaultwarden hash or argon2.”",
+        "What are the best self-hosted alternatives for Google Photos?",
+        "What are the differences between LinuxServer.io images and the official docker images?",
+        "How should I back up the data on my NextCloud instance ? What back up strategy is best and should I run a cron job for it?",
+        "What is LetsEncrypt used for?",
+        "Could You walk me through how to set up VaultWarden? I need the complete walkthrough and docker-compose files. This includes setting up certificates for TLS. I already have a domain and configured the DNS.",
+        "Set up Paperless-ngx with Redis and PostgreSQL behind a reverse proxy.",
+]

@@ -1,0 +1,14 @@
+services:
+  deploybot:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./apps.db:/app/apps.db
+      - ./conversation_history.db:/app/conversation_history.db
+      - ./rag/chroma_db:/app/rag/chroma_db
+      - ./.langchain_cache.db:/app/.langchain_cache.db
+      - ./data/readme_cache:/app/data/readme_cache
+    env_file:
+      - .env
+    restart: unless-stopped

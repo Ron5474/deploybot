@@ -1,0 +1,31 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.env
+apps.db
+conversation_history.db
+.langchain_cache.db
+node_modules/
+frontend/dist/
+data/readme_cache/
+data/self_hosted_apps/
+rag/chroma_db/
+.python-version
+.superpowers/
+conversation_history.db-shm
+conversation_history.db-wal
+docs/
+PLAN.md
+FEATURES.md
+slides.md
+
+
+
+*.pdf
+
+# Virtual environments
+.venv
