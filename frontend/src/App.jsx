@@ -217,7 +217,7 @@ function App() {
           )}
           <div className="chat-model-badge">
             <span className="chat-model-dot" />
-            Qwen-3.5
+            Qwen3.6-27B
           </div>
         </div>
         <ChatWindow messages={messages} isLoading={isLoading} onSend={sendMessage} username={username} onRegenerate={regenerateLastResponse} />
