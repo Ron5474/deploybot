@@ -69,7 +69,26 @@ A ChromaDB-based cache returns stored responses for semantically similar queries
 - [uv](https://docs.astral.sh/uv/getting-started/installation/) (Python package manager)
 - Node.js 20+
 - A Tavily API key — [tavily.com](https://tavily.com) (free tier available)
+- A GitHub personal access token (only needed if you re-run the scraper)
 - An OpenAI-compatible LLM endpoint (Ollama, vLLM, OpenRouter, etc.)
+
+### Obtain API keys
+
+**Tavily** (required — used by the web search tool):
+
+1. Sign up at [app.tavily.com](https://app.tavily.com). The free tier includes ~1,000 requests/month.
+2. From the dashboard, copy the API key (starts with `tvly-`).
+3. Paste it into `.env` as `TAVILY_TOKEN`.
+
+**GitHub personal access token** (only needed to re-run `data.scraper`):
+
+1. Go to [github.com/settings/tokens/new](https://github.com/settings/tokens/new) (classic tokens).
+2. Set a note like `deploybot scraper` and pick an expiration.
+3. Under **Select scopes**, check `public_repo` (inside the `repo` group). No other scopes are needed — the scraper only reads public README files.
+4. Click **Generate token** and copy the value (it will not be shown again).
+5. Paste it into `.env` as `GITHUB_ACCESS_TOKEN`.
+
+> A fine-grained token also works: give it **public repositories (read-only)** access with no account permissions.
 
 ### 1. Clone and configure
 
