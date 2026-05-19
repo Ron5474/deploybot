@@ -8,6 +8,7 @@ docs_collection = client.get_or_create_collection("app_docs")
 app_collection = client.get_or_create_collection("app_catalog")
 
 README_DIR = Path("data/readme_cache")
+BATCH_SIZE = 256
 
 def chunk_by_heading(content):
     current_heading = ""
@@ -29,24 +30,32 @@ def chunk_by_heading(content):
 
 
 def read_and_embed_chunks():
-    
-    j = 0
+    documents, metadatas, ids = [], [], []
 
-    for file in README_DIR.glob("*.md"):
+    def flush():
+        if not documents:
+            return
+        docs_collection.upsert(documents=documents, metadatas=metadatas, ids=ids)
+        documents.clear()
+        metadatas.clear()
+        ids.clear()
+
+    for j, file in enumerate(README_DIR.glob("*.md")):
         app_name = file.stem
         content = file.read_text(encoding="utf-8")
-        
+
         print(f"Reading file {app_name} ---- {j}")
-        j += 1
         chunks = chunk_by_heading(content)
 
         for i, (section, text) in enumerate(chunks):
-            docs_collection.upsert(
-                    documents=[text],
-                    metadatas=[{"app_name": app_name, "section": section}],
-                    ids=[f"{app_name}_{i}"]
-            )
+            documents.append(text)
+            metadatas.append({"app_name": app_name, "section": section})
+            ids.append(f"{app_name}_{i}")
 
+            if len(documents) >= BATCH_SIZE:
+                flush()
+
+    flush()
     print("Embedded all chunks")
 
 """
@@ -67,14 +76,13 @@ def read_and_embed_app_catalog():
     cursor.execute(query)
     rows = cursor.fetchall()
 
-    for i, row in enumerate(rows):
-        name, category, desc = row
-        app_collection.upsert(
-                documents=[f"{name} {category} {desc}"],
-                metadatas=[{"name": name, "category": category}],
-                ids=[name]
-        )
-    
+    documents = [f"{name} {category} {desc}" for name, category, desc in rows]
+    metadatas = [{"name": name, "category": category} for name, category, _ in rows]
+    ids = [name for name, _, _ in rows]
+
+    if documents:
+        app_collection.upsert(documents=documents, metadatas=metadatas, ids=ids)
+
     conn.close()
     print("Embedded all App Catalog")
     
