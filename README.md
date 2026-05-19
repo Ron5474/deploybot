@@ -94,10 +94,10 @@ These steps populate the SQLite app database and ChromaDB vector store. Only nee
 ```bash
 # Scrape app metadata from awesome-selfhosted and fetch READMEs
 # Requires GITHUB_ACCESS_TOKEN in your .env
-uv run python data/scraper.py
+uv run python -m data.scraper
 
 # Embed README chunks and app catalog into ChromaDB
-uv run python rag/embed.py
+uv run python -m rag.embed
 ```
 
 ### 4. Install frontend dependencies

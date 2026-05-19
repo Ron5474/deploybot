@@ -1,6 +1,7 @@
 import requests
 import re
 import os
+from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 
@@ -10,6 +11,7 @@ load_dotenv()
 
 URL = "https://raw.githubusercontent.com/awesome-selfhosted/awesome-selfhosted/master/README.md"
 GITHUB_ACCESS_TOKEN = os.environ["GITHUB_ACCESS_TOKEN"]
+MAX_WORKERS = 16
 
 # Regex to match a list entry line like:
 # - [Name](url) - Description. ([Source Code](github_url)) `License` `Language`
@@ -78,9 +80,7 @@ def extract_app_info(match, category):
     source_url = match.group("source_url")
     license_ = match.group("license")
     language = match.group("language")
-    if source_url:
-        extract_source_url_readme_and_save(source_url)
-    
+
     kvs = {
             "name": name,
             "category": category,
@@ -107,11 +107,15 @@ def fetch_page():
         if line.startswith("## "):
             current_category = line[3:].strip()
             continue
-        
+
         match = ENTRY_RE.match(line)
         if match:
             data = extract_app_info(match, current_category)
             apps_data.append(data)
+
+    source_urls = [app["source_url"] for app in apps_data if app["source_url"]]
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as ex:
+        list(ex.map(extract_source_url_readme_and_save, source_urls))
 
     return apps_data
 
