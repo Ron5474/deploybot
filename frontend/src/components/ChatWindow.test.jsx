@@ -35,5 +35,5 @@ test('shows typing indicator when loading with empty last message', () => {
     { role: 'assistant', content: '' },
   ]
   const { container } = render(<ChatWindow messages={messages} isLoading={true} onSend={() => {}} />)
-  expect(container.querySelector('.typing-indicator')).toBeInTheDocument()
+  expect(container.querySelector('.message-typing')).toBeInTheDocument()
 })

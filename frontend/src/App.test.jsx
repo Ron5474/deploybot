@@ -1,10 +1,20 @@
 import { render, screen } from '@testing-library/react'
-import { vi } from 'vitest'
+import { vi, afterEach } from 'vitest'
 import App from './App'
 
-// Silence fetch errors in jsdom
+// Stub network: the mount-time fetchConversations() call resolves to an empty
+// conversation list so these static-render tests don't hit the network.
 beforeEach(() => {
-  global.fetch = vi.fn(() => Promise.reject(new Error('network')))
+  // App gates the chat UI behind a saved username (App.jsx:199); seed one so
+  // these render tests reach the sidebar/topbar/chat view instead of LandingPage.
+  localStorage.setItem('deploybot_username', 'Tester')
+  global.fetch = vi.fn(() =>
+    Promise.resolve({ ok: true, json: () => Promise.resolve([]) })
+  )
+})
+
+afterEach(() => {
+  localStorage.clear()
 })
 
 test('renders sidebar', () => {
@@ -19,7 +29,7 @@ test('renders strategy selector', () => {
 
 test('renders model badge', () => {
   render(<App />)
-  expect(screen.getByText('claude-sonnet-4-6')).toBeInTheDocument()
+  expect(screen.getByText('Qwen3.6-27B')).toBeInTheDocument()
 })
 
 test('renders empty state initially', () => {

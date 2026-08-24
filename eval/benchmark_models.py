@@ -7,19 +7,14 @@ logging.disable(logging.CRITICAL)
 import textwrap
 import time
 import uuid
-from openai import OpenAI
-from agent.agent import agent
-from agent.prompts import SYSTEM_PROMPT
+from agent.agent import agent, small_agent
 from eval.queries import QUERIES
 
 RUN_ID = uuid.uuid4().hex[:8]
 COL = 90
 
-_small_client = OpenAI(
-    base_url=os.environ["MODEL_BASE_URL"],
-    api_key=os.environ["SMALL_MODEL_API_KEY"],
-)
-_small_model = os.environ["SMALL_MODEL_NAME"]
+MODEL_NAME = os.environ["MODEL_NAME"]
+SMALL_MODEL_NAME = os.environ["SMALL_MODEL_NAME"]
 
 
 def run_large(query, session_id):
@@ -31,17 +26,16 @@ def run_large(query, session_id):
     return msg.content or "(no response)"
 
 
-def run_small(query):
-    response = _small_client.chat.completions.create(
-        model=_small_model,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": f"/no_think\n{query}"},
-        ]
+def run_small(query, session_id):
+    """Mirror run_large exactly: same ReAct agent construction, same tools, same
+    system prompt. Only the underlying model differs, which is the variable this
+    benchmark is supposed to isolate."""
+    result = small_agent.invoke(
+        {"messages": [("human", query)]},
+        config={"configurable": {"thread_id": session_id}}
     )
-    msg = response.choices[0].message
-    d = msg.model_dump()
-    return d.get("content") or d.get("reasoning_content") or "(no response)"
+    msg = result["messages"][-1]
+    return msg.content or "(no response)"
 
 
 def preview(text, width=COL - 12, lines=2):
@@ -55,6 +49,9 @@ def preview(text, width=COL - 12, lines=2):
 print("=" * COL)
 print("DEPLOYBOT MODEL COMPARISON")
 print(f"Run ID: {RUN_ID}")
+print(f"Large: {MODEL_NAME}")
+print(f"Small: {SMALL_MODEL_NAME}")
+print("Both run through the same ReAct agent with the same tools.")
 print("=" * COL)
 
 total_large, total_small = 0, 0
@@ -66,7 +63,7 @@ for i, q in enumerate(QUERIES):
     large_t = time.time() - t0
 
     t0 = time.time()
-    small_r = run_small(q)
+    small_r = run_small(q, f"bench-small-{RUN_ID}-{i}")
     small_t = time.time() - t0
 
     speedup = large_t / small_t if small_t > 0 else 0

@@ -6,7 +6,7 @@ from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from langchain_core.globals import set_llm_cache
 from langchain_core.callbacks import BaseCallbackHandler
 from langchain_community.cache import SQLiteCache
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
 import sqlite3
 from langgraph.checkpoint.sqlite import SqliteSaver
 
@@ -43,13 +43,13 @@ llm = ChatOpenAI(base_url=MODEL_URL, api_key=MODEL_API_KEY, model=MODEL_NAME)
 
 conn = sqlite3.connect("conversation_history.db", check_same_thread=False)
 memory = SqliteSaver(conn)
-agent = create_react_agent(llm, tools, prompt=SYSTEM_PROMPT, checkpointer=memory)
+agent = create_agent(llm, tools, system_prompt=SYSTEM_PROMPT, checkpointer=memory)
 
 SMALL_MODEL_NAME = os.environ["SMALL_MODEL_NAME"]
 SMALL_MODEL_API_KEY = os.environ["SMALL_MODEL_API_KEY"]
 
 small_llm = ChatOpenAI(base_url=MODEL_URL, api_key=SMALL_MODEL_API_KEY, model=SMALL_MODEL_NAME)
-small_agent = create_react_agent(small_llm, tools, prompt=SYSTEM_PROMPT, checkpointer=memory)
+small_agent = create_agent(small_llm, tools, system_prompt=SYSTEM_PROMPT, checkpointer=memory)
 
 
 def build_history_messages(session_id):

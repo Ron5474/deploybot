@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from agent.agent import agent, run_with_reflection, run_with_chaining, run_with_meta_prompting, llm, ToolLogger
 from agent.prompts import CHECKLIST_PROMPT
+from agent.guardrail import redact_secrets, StreamRedactor
 from langchain_core.messages import HumanMessage
 from db.conversations import save_message, get_all_sessions, get_session_messages, delete_session, delete_last_exchange
 
@@ -33,7 +34,7 @@ class ChecklistRequest(BaseModel):
 def chat(request: ChatRequest):
     def generate():
         from langchain_core.messages import AIMessageChunk, AIMessage
-        full_response = []
+        redactor = StreamRedactor()
         try:
             for chunk, _ in agent.stream(
                 {"messages": [("human", request.message)]},
@@ -41,10 +42,14 @@ def chat(request: ChatRequest):
                 config={"configurable": {"thread_id": request.session_id}, "callbacks": [ToolLogger()]}
             ):
                 if isinstance(chunk, (AIMessageChunk, AIMessage)) and chunk.content:
-                    full_response.append(chunk.content)
-                    yield chunk.content
+                    piece = redactor.feed(chunk.content)
+                    if piece:
+                        yield piece
+            tail = redactor.flush()
+            if tail:
+                yield tail
             save_message(request.session_id, "human", request.message, request.client_id)
-            save_message(request.session_id, "assistant", "".join(full_response), request.client_id)
+            save_message(request.session_id, "assistant", redactor.full_redacted, request.client_id)
         except Exception as e:
             yield f"\n\n[Error: {e}]"
 
@@ -53,17 +58,17 @@ def chat(request: ChatRequest):
 @app.post("/chat/reflect")
 def reflection_chat(request: ChatRequest):
     res = run_with_reflection(request.message, request.session_id, request.client_id)
-    return {"response": res}
+    return {"response": redact_secrets(res)}
 
 @app.post("/chat/chain")
 def chain_chat(request: ChatRequest):
     res = run_with_chaining(request.message, request.session_id, request.client_id)
-    return {"response": res}
+    return {"response": redact_secrets(res)}
 
 @app.post("/chat/meta")
 def meta_chat(request: ChatRequest):
     res = run_with_meta_prompting(request.message, request.session_id, request.client_id)
-    return {"response": res}
+    return {"response": redact_secrets(res)}
 
 
 @app.post("/checklist")
