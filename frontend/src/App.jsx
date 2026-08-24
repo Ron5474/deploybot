@@ -24,9 +24,13 @@ function App() {
   )
 
   const fetchConversations = async () => {
-    const res = await fetch(`/conversations?client_id=${clientId.current}`)
-    const data = await res.json()
-    setConversations(data)
+    try {
+      const res = await fetch(`/conversations?client_id=${clientId.current}`)
+      const data = await res.json()
+      setConversations(data)
+    } catch {
+      setConversations([])
+    }
   }
 
   useEffect(() => { fetchConversations() }, [])
