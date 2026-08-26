@@ -1,3 +1,5 @@
+import uuid
+
 import chromadb
 from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
 
@@ -29,7 +31,22 @@ def get_response(query):
                 return cached, True
 
         from agent.agent import agent
-        result = agent.invoke({"messages": [("human", query)]})
+        result = agent.invoke(
+                {"messages": [("human", query)]},
+                config={"configurable": {"thread_id": f"semcache-{uuid.uuid4().hex[:8]}"}},
+        )
         response = result["messages"][-1].content
         cache_response(query, response)
         return response, False
+
+
+def clear_cache():
+        """Drop every cached response so a benchmark can measure a true cold pass.
+        Only the response_cache collection is recreated — the RAG index
+        (app_docs / app_catalog) in the same store is left untouched."""
+        global cache_collection
+        client.delete_collection("response_cache")
+        cache_collection = client.get_or_create_collection(
+                name="response_cache",
+                embedding_function=DefaultEmbeddingFunction(),
+        )

@@ -39,7 +39,7 @@ tools = [query_app_db, web_search, retrieve_cve, get_info_from_vector_db]
 
 if not os.environ.get("DISABLE_CACHE"):
     set_llm_cache(SQLiteCache(database_path=".langchain_cache.db"))
-llm = ChatOpenAI(base_url=MODEL_URL, api_key=MODEL_API_KEY, model=MODEL_NAME)
+llm = ChatOpenAI(base_url=MODEL_URL, api_key=MODEL_API_KEY, model=MODEL_NAME, timeout=60, max_retries=1)
 
 conn = sqlite3.connect("conversation_history.db", check_same_thread=False)
 memory = SqliteSaver(conn)
@@ -48,7 +48,7 @@ agent = create_agent(llm, tools, system_prompt=SYSTEM_PROMPT, checkpointer=memor
 SMALL_MODEL_NAME = os.environ["SMALL_MODEL_NAME"]
 SMALL_MODEL_API_KEY = os.environ["SMALL_MODEL_API_KEY"]
 
-small_llm = ChatOpenAI(base_url=MODEL_URL, api_key=SMALL_MODEL_API_KEY, model=SMALL_MODEL_NAME)
+small_llm = ChatOpenAI(base_url=MODEL_URL, api_key=SMALL_MODEL_API_KEY, model=SMALL_MODEL_NAME, timeout=60, max_retries=1)
 small_agent = create_agent(small_llm, tools, system_prompt=SYSTEM_PROMPT, checkpointer=memory)
 
 
