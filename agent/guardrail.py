@@ -29,14 +29,18 @@ _PATTERNS = [
 
 # NAME=VALUE / NAME: VALUE where NAME looks like a secret — keep the name, drop
 # the value, so "DEPLOYMENT_API_KEY=sk-..." becomes "DEPLOYMENT_API_KEY=[REDACTED]".
-_KV = re.compile(
-    r"(?im)\b([A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL)[A-Z0-9_]*)\s*([:=])\s*`?([^\s`]+)`?"
-)
+_SECRET_NAME = r"[A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|CREDENTIAL)[A-Z0-9_]*"
+_KV = re.compile(rf"(?im)\b({_SECRET_NAME})\s*([:=])\s*`?([^\s`]+)`?")
 
-# How much trailing text a streaming redactor must hold back so a secret split
-# across chunks is still caught before emission. Comfortably longer than any
-# single secret token we match.
-STREAM_HOLDBACK = 96
+# Streaming can't hold back a fixed number of characters: JWTs, bearer tokens
+# and NAME=value pairs have no maximum length, so any fixed window can be
+# outgrown. Instead the stream is only ever cut right after whitespace. Most
+# patterns above can't contain whitespace, so a secret never straddles such a
+# cut. The two that can (_KV and "Bearer <token>") are covered by _OPEN: it
+# matches text that ends partway through one of them, e.g. "API_KEY = " or
+# "Bearer ", where the next word decides whether there is a secret. A new
+# pattern that can span whitespace needs an entry here too.
+_OPEN = re.compile(rf"(?i)(?:\b{_SECRET_NAME}\s*(?:[:=]\s*)?|Bearer\s+)\Z")
 
 
 def _env_secret_values():
@@ -60,33 +64,49 @@ def redact_secrets(text):
     return out
 
 
+def _can_split_after(left):
+    """True if `left` can be redacted on its own, whatever text follows it:
+    redact_secrets(left + more) == redact_secrets(left) + redact_secrets(more).
+    `left` must end in whitespace."""
+    out = left
+    for val in _env_secret_values():
+        # `left` ends with the start of a known secret value (one with spaces in it)
+        if any(out.endswith(val[:n]) for n in range(1, len(val))):
+            return False
+        out = out.replace(val, REDACTED)
+    return out[-1:].isspace() and not _OPEN.search(out)
+
+
 class StreamRedactor:
     """Incremental redaction for streamed output. Feed chunks; it emits redacted
-    text while holding back a short tail that might be a forming secret, then
-    flush() releases the remainder. A secret spanning chunk boundaries is caught
-    because redaction always runs on the full accumulated buffer."""
+    text up to the last whitespace that no secret can span, and holds the rest
+    back until more text (or flush()) settles it. Only text that is final gets
+    emitted, so the pieces always add up to redact_secrets() of the whole input,
+    however it was chunked."""
 
-    def __init__(self, holdback=STREAM_HOLDBACK):
-        self._buf = ""
-        self._emitted_len = 0   # measured in redacted-string space
-        self._holdback = holdback
+    def __init__(self):
+        self._buf = ""   # raw text not emitted yet
+        self._out = ""   # redacted text emitted so far
 
     def feed(self, chunk):
         if not chunk:
             return ""
         self._buf += chunk
-        safe = redact_secrets(self._buf)
-        emit_upto = max(self._emitted_len, len(safe) - self._holdback)
-        piece = safe[self._emitted_len:emit_upto]
-        self._emitted_len = emit_upto
-        return piece
+        # Cut at the latest safe whitespace; usually that is the last one.
+        for gap in reversed(list(re.finditer(r"\s+", self._buf))):
+            if _can_split_after(self._buf[:gap.end()]):
+                piece = redact_secrets(self._buf[:gap.end()])
+                self._buf = self._buf[gap.end():]
+                self._out += piece
+                return piece
+        return ""
 
     def flush(self):
-        safe = redact_secrets(self._buf)
-        piece = safe[self._emitted_len:]
-        self._emitted_len = len(safe)
+        piece = redact_secrets(self._buf)
+        self._buf = ""
+        self._out += piece
         return piece
 
     @property
     def full_redacted(self):
-        return redact_secrets(self._buf)
+        return self._out + redact_secrets(self._buf)

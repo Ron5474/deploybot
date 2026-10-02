@@ -1,8 +1,9 @@
 import json
+import sqlite3
 import sqlparse
 from langchain_core.tools import tool
 
-from db.db import setup_db
+from db.db import DB_PATH
 
 @tool
 def query_app_db(sql_query):
@@ -15,7 +16,13 @@ def query_app_db(sql_query):
     if len(parsed_sql) != 1 or parsed_sql[0].get_type() != "SELECT":
         return "Invalid SQL Query"
 
-    conn, cursor = setup_db()
+    # The SQL is written by the LLM, so open the database read-only: even a
+    # statement that slips past the SELECT check above cannot change data.
+    try:
+        conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
+    except sqlite3.Error as e:
+        return f"Query error: {str(e)}"
+    cursor = conn.cursor()
 
     try:
         cursor.execute(sql_query)

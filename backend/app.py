@@ -1,3 +1,4 @@
+import logging
 import os
 
 from fastapi import FastAPI, Query
@@ -11,6 +12,8 @@ from agent.prompts import CHECKLIST_PROMPT
 from agent.guardrail import redact_secrets, StreamRedactor
 from langchain_core.messages import HumanMessage
 from db.conversations import save_message, get_all_sessions, get_session_messages, delete_session, delete_last_exchange
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -50,8 +53,11 @@ def chat(request: ChatRequest):
                 yield tail
             save_message(request.session_id, "human", request.message, request.client_id)
             save_message(request.session_id, "assistant", redactor.full_redacted, request.client_id)
-        except Exception as e:
-            yield f"\n\n[Error: {e}]"
+        except Exception:
+            # Full details stay in the server log; exception text can carry
+            # internal URLs, paths or keys, so the client gets a generic message.
+            logger.exception("chat stream failed for session %s", request.session_id)
+            yield "\n\n[Error: something went wrong while generating the response. Please try again.]"
 
     return StreamingResponse(generate(), media_type="text/event-stream")
 
