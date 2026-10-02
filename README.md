@@ -4,6 +4,28 @@ An AI assistant for self-hosting open-source applications. Ask it to generate do
 
 ---
 
+## For reviewers
+
+DeployBot is a FastAPI + LangGraph agent that answers self-hosting questions using a SQL app catalog, a RAG index of app READMEs, CVE lookup, and web search.
+
+The files most worth reading:
+
+| File | What to look at |
+|---|---|
+| `agent/guardrail.py` | Output redaction of secrets, including `StreamRedactor`, which redacts a token stream without ever emitting part of a secret |
+| `agent/agent.py` | The four prompting strategies: ReAct streaming, self-reflection, prompt chaining, meta-prompting |
+| `tools/db_tool.py` | Running LLM-written SQL safely: SELECT-only parse check plus a read-only database connection |
+| `rag/embed.py` | Chunking READMEs by heading and indexing them into ChromaDB |
+| `backend/app.py` | The streaming `/chat` endpoint and how redaction and persistence fit around it |
+
+Run the tests (no API keys or LLM needed):
+
+```bash
+uv sync && uv run pytest
+```
+
+---
+
 ## Features
 
 ### Four Prompting Strategies
@@ -48,9 +70,11 @@ When the assistant returns a docker-compose file, a checklist is automatically g
 
 Repeated identical prompts are served from a local SQLite cache, skipping the LLM entirely.
 
-### Semantic Cache
+### Semantic Cache (benchmarked, not in the request path)
 
-A ChromaDB-based cache returns stored responses for semantically similar queries (cosine distance threshold).
+`rag/semantic_cache.py` is a ChromaDB-based semantic caching layer: it returns a stored response when a new query is close enough to a cached one (distance threshold). It is exercised only by `eval/benchmark_semantic_cache.py`, which measures cold vs. warm latency. It is not yet wired into `/chat`.
+
+Why not: the cache is keyed only on the question text. A follow-up like "what about with Postgres?" means something different in every conversation, so the cache would need to be scoped per conversation before it is safe to serve from it.
 
 ---
 
