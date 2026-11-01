@@ -1,0 +1,98 @@
+================================================================================
+SEMANTIC CACHE BENCHMARK (with paraphrase pass)
+================================================================================
+[cold] Query  1:  22.15s | cached=False
+[warm] Query  1:   0.25s | cached=True
+[para] Query  1:  13.05s | cached=False
+[cold] Query  2:   9.11s | cached=False
+[warm] Query  2:   0.25s | cached=True
+[para] Query  2:  10.29s | cached=False
+[cold] Query  3:  13.65s | cached=False
+[warm] Query  3:   0.25s | cached=True
+[para] Query  3:  14.76s | cached=False
+[cold] Query  4:  13.69s | cached=False
+[warm] Query  4:   0.25s | cached=True
+[para] Query  4:   0.24s | cached=True
+[cold] Query  5:  14.05s | cached=False
+[warm] Query  5:   0.24s | cached=True
+[para] Query  5:  19.40s | cached=False
+[cold] Query  6:  11.25s | cached=False
+[warm] Query  6:   0.29s | cached=True
+[para] Query  6:  19.75s | cached=False
+[cold] Query  7:  21.14s | cached=False
+[warm] Query  7:   0.24s | cached=True
+[para] Query  7:   5.38s | cached=False
+[cold] Query  8:   6.54s | cached=False
+[warm] Query  8:   0.23s | cached=True
+[para] Query  8:   0.21s | cached=True
+[cold] Query  9:  17.64s | cached=False
+[warm] Query  9:   0.27s | cached=True
+[para] Query  9:  22.75s | cached=False
+[cold] Query 10:  14.57s | cached=False
+[warm] Query 10:   0.21s | cached=True
+[para] Query 10:  18.55s | cached=False
+2026-10-30 09:46:00,340 [TOOL] Retrying request to /chat/completions in 0.476454 seconds
+[cold] Query 11:  13.67s | cached=False
+[warm] Query 11:   0.21s | cached=True
+[para] Query 11:   7.59s | cached=False
+[cold] Query 12:  42.24s | cached=False
+[warm] Query 12:   0.32s | cached=True
+[para] Query 12:   0.22s | cached=True
+[cold] Query 13:  17.11s | cached=False
+[warm] Query 13:   0.27s | cached=True
+[para] Query 13:  21.33s | cached=False
+[cold] Query 14:  15.24s | cached=False
+[warm] Query 14:   0.24s | cached=True
+[para] Query 14:   0.21s | cached=True
+[cold] Query 15:  10.52s | cached=False
+[warm] Query 15:   0.26s | cached=True
+[para] Query 15:   0.22s | cached=True
+[cold] Query 16:   9.33s | cached=False
+[warm] Query 16:   0.24s | cached=True
+[para] Query 16:   0.29s | cached=True
+[cold] Query 17:  11.82s | cached=False
+[warm] Query 17:   0.23s | cached=True
+[para] Query 17:  15.54s | cached=False
+[cold] Query 18:   4.46s | cached=False
+[warm] Query 18:   0.21s | cached=True
+[para] Query 18:   4.40s | cached=False
+[cold] Query 19:  25.01s | cached=False
+[warm] Query 19:   0.22s | cached=True
+[para] Query 19:  47.00s | cached=False
+[cold] Query 20:  22.82s | cached=False
+[warm] Query 20:   0.26s | cached=True
+[para] Query 20:   0.21s | cached=True
+
+--- Results ---
+Query                                                          Cold     Warm    Speedup
+----------------------------------------------------------------------------------------
+Generate a compose file for Gitea with PostgreSQL            22.15s    0.25s      90.3x
+Does Immich have any recent CVEs?                             9.11s    0.25s      36.9x
+How do I set up NextCloud?                                   13.65s    0.25s      53.7x
+What dependencies does VaultWarden need?                     13.69s    0.25s      55.2x
+What environment variables do I need for WireGuard?          14.05s    0.24s      57.5x
+What are the resource requirements for Jellyfin vs Plex?     11.25s    0.29s      38.3x
+I am looking for an open source media player that can pl     21.14s    0.24s      86.9x
+What are the main differences between Joplin and Obsidia      6.54s    0.23s      28.8x
+How can I configure SSO/OAuth for Authentik with my othe     17.64s    0.27s      64.7x
+How does the Sonarr/Radarr with Prowlarr and Jellyfin wo     14.57s    0.21s      68.0x
+My NextCloud container keeps restarting, what could be t     13.67s    0.21s      64.3x
+Are there any known vulnerabilities in the latest versio     42.24s    0.32s     132.2x
+What security hardening steps should I take after deploy     17.11s    0.27s      62.3x
+I have the following message on my admin dashboard for V     15.24s    0.24s      63.1x
+What are the best self-hosted alternatives for Google Ph     10.52s    0.26s      40.7x
+What are the differences between LinuxServer.io images a      9.33s    0.24s      39.4x
+How should I back up the data on my NextCloud instance ?     11.82s    0.23s      51.9x
+What is LetsEncrypt used for?                                 4.46s    0.21s      20.9x
+Could You walk me through how to set up VaultWarden? I n     25.01s    0.22s     113.8x
+Set up Paperless-ngx with Redis and PostgreSQL behind a      22.82s    0.26s      89.2x
+----------------------------------------------------------------------------------------
+Average                                                      15.80s    0.25s      63.8x
+Median per-query speedup                                                          62.3x
+
+Integrity: cold misses 20/20, warm hits 20/20 (of 20 queries)
+(A valid run needs cold misses = warm hits = all queries.)
+
+Hit rate — exact string: 20/20
+Hit rate — paraphrased:  7/20
+Wrote /home/ron/workspace/github/Ron5474/deploybot/eval/results/semantic_cache_20261030-095028.json

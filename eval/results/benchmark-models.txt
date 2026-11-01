@@ -1,0 +1,154 @@
+==========================================================================================
+DEPLOYBOT MODEL COMPARISON
+Run ID: 35829d9f
+Large: main
+Small: deepseek-v4-flash
+Both run through the same ReAct agent with the same tools.
+==========================================================================================
+
+[ 1/20] Generate a compose file for Gitea with PostgreSQL
+  Large    20.7s  Here is a production-ready `docker-compose.yml` for Gitea with PostgreSQL:
+            ```yaml networks:   gitea:     driver: bridge  volumes:   gitea-data:…
+  Small    31.5s  Here's a production-oriented `docker-compose.yml` for Gitea + PostgreSQL,
+            based on the official Gitea docs (current stable is **1.26.4**):  ```yaml…
+
+[ 2/20] Does Immich have any recent CVEs?
+  Large    16.0s  Yes, Immich has had several recent CVEs. Here's a summary of the most recent
+            ones, starting with the newest:  ### 2026 CVEs | CVE | Severity | Fixed in…
+  Small     9.4s  Yes — Immich has several recent CVEs. Here's a summary, ordered by publication
+            date:  | CVE | Severity | Affected versions | Fixed in | Summary |…
+
+[ 3/20] How do I set up NextCloud?
+  Large    29.7s  Here's a production-ready Nextcloud setup using Docker Compose with
+            PostgreSQL, Redis, and cron for background jobs.  ## `.env` File  Create this…
+  Small    16.8s  Here's a solid, production-oriented Nextcloud setup using Docker Compose with
+            the official image, MariaDB, and Redis (for file locking and caching). Note:…
+
+[ 4/20] What dependencies does VaultWarden need?
+  Large     6.8s  VaultWarden has very minimal dependencies, which makes it lightweight and easy
+            to deploy:  ### Required - **Docker** – the runtime that executes the…
+  Small    17.2s  VaultWarden (the Rust-based Bitwarden-compatible server) is intentionally
+            light on dependencies. Here's what it needs, from the most essential to the…
+
+[ 5/20] What environment variables do I need for WireGuard?
+  Large    31.8s  Environment variables for WireGuard depend on which image you use. Here are
+            the two most popular options:  ---  ## 1. LinuxServer `linuxserver/wireguard`…
+  Small    17.3s  "WireGuard" itself (the kernel module / `wg` tool) doesn't use environment
+            variables — but every popular WireGuard container image does. Which one you…
+
+[ 6/20] What are the resource requirements for Jellyfin vs Plex?
+  Large    16.6s  Here's a practical comparison of Jellyfin vs Plex resource requirements:  ##
+            Resource Comparison  ### Idle Usage (Small Library) | Metric | Jellyfin | Plex…
+  Small    19.9s  Here's a practical breakdown of resource requirements for the two media
+            servers. The short answer: **the base apps have nearly identical minimums —…
+
+[ 7/20] I am looking for an open source media player that can play most videos or audios
+  Large    18.0s  Based on your requirements, here are the best open-source media players that
+            can play most video and audio formats without needing extra codecs:  ## **Top…
+  Small    11.1s  Here are the best open-source options, all with built-in codecs so you don't
+            need to install anything extra:  ## Top pick: VLC (VideoLAN Client) -…
+
+[ 8/20] What are the main differences between Joplin and Obsidian?
+  Large    13.9s  I can help with self-hosting deployment topics, but I don't have a tool to
+            directly compare note-taking applications' features. However, I can share the…
+  Small    14.5s  Here's a practical comparison of the two, with a focus on what matters for
+            self-hosting:  ## Storage & data format  | | **Joplin** | **Obsidian** |…
+
+[ 9/20] How can I configure SSO/OAuth for Authentik with my other self-hosted apps?
+  Large    40.8s  Here's how to configure SSO/OAuth with Authentik for your self-hosted apps.
+            ## The General Pattern  The process is the same for almost every…
+  Small    26.6s  Here's a practical walkthrough. Authentik integrates with other self-hosted
+            apps in two ways:  1. **Native OIDC/OAuth2** — for apps that support OpenID…
+
+[10/20] How does the Sonarr/Radarr with Prowlarr and Jellyfin work? Where does someone s
+  Large    19.4s  The Sonarr/Radarr + Prowlarr + Jellyfin stack is a popular, self-hosted
+            "automated media library" system. Here is how the pieces fit together and…
+  Small    24.5s  Here's how the "arr stack" fits together, plus an honest note on the content-
+            sourcing question.  ## The architecture: each app has one job  | App | Role |…
+
+[11/20] My NextCloud container keeps restarting, what could be the common causes for thi
+  Large    25.1s  Common causes for Nextcloud container restart loops  1. Database connection
+            issues - Wrong database credentials, hostname, port, or database name in the…
+  Small     6.4s  A restarting Nextcloud container is almost always a symptom of one of a few
+            root causes. Here's how to diagnose it and what the common causes are.  ##…
+
+[12/20] Are there any known vulnerabilities in the latest version of NextCloud?
+  Large    46.4s  Here are the known vulnerabilities affecting the **latest stable versions of
+            Nextcloud Server** (currently v32 and v33), based on recent advisories from…
+  Small    40.3s  Yes — there are several recently disclosed vulnerabilities affecting the
+            latest Nextcloud Server releases. Here's what matters right now.  ## Current…
+
+[13/20] What security hardening steps should I take after deploying VaultWarden?
+  Large    24.2s  Here are the key security hardening steps for VaultWarden after deployment:
+            ## 1. Set Strong KDF Iterations  Increase the Key Derivation Function…
+  Small    29.4s  Here's a practical hardening checklist for a self-hosted Vaultwarden instance,
+            ordered roughly from most to least critical. It assumes you're running it in…
+
+[14/20] I have the following message on my admin dashboard for VaultWarden, what does it
+  Large    11.6s  This message means your `ADMIN_TOKEN` is currently stored as a plain text
+            string (e.g., `ADMIN_TOKEN=my-secret-password`). VaultWarden recommends…
+  Small    16.5s  That message is a security warning from VaultWarden (introduced around v1.28):
+            your `ADMIN_TOKEN` is set as a **plain-text password** in your…
+
+[15/20] What are the best self-hosted alternatives for Google Photos?
+  Large    15.1s  Here are the top self-hosted alternatives to Google Photos, ranked by how
+            closely they match the Google Photos experience:  ### 1. Immich (Best Overall…
+  Small    26.8s  Here are the top self-hosted Google Photos alternatives from the app database,
+            grouped by what you're optimizing for.  ## Best overall replacement: Immich…
+
+[16/20] What are the differences between LinuxServer.io images and the official docker i
+  Large    15.2s  The main differences between LinuxServer.io images and official Docker images
+            generally come down to **maintenance philosophy, structure, and convenience**.…
+  Small    24.4s  Here's a practical comparison. Both approaches work fine for self-hosting —
+            they just make different tradeoffs.  ## 1. Init system and process supervision…
+
+[17/20] How should I back up the data on my NextCloud instance ? What back up strategy i
+  Large    38.5s  Great question! Backing up Nextcloud properly is essential. Here's a
+            comprehensive backup strategy.  ## What to Back Up  A complete Nextcloud…
+  Small    15.8s  Here's a practical rundown based on the official Nextcloud backup docs and
+            community best practices.  ## What you need to back up  A Nextcloud backup is…
+
+[18/20] What is LetsEncrypt used for?
+  Large     4.5s  Let's Encrypt is a free, automated, and open Certificate Authority (CA) used
+            to provide **Transport Layer Security (TLS) encryption** (commonly known as…
+  Small     6.1s  Let's Encrypt is a free, automated, open certificate authority (CA) that
+            issues **TLS/SSL certificates** — the certificates that enable HTTPS on…
+
+[19/20] Could You walk me through how to set up VaultWarden? I need the complete walkthr
+  Large    34.5s  Here's a complete walkthrough for setting up VaultWarden with TLS using Caddy
+            as a reverse proxy (which handles automatic certificate provisioning via Let's…
+  Small    31.6s  Here's a complete walkthrough. I've verified the current details against the
+            Vaultwarden project (latest stable release at the time of writing is…
+
+[20/20] Set up Paperless-ngx with Redis and PostgreSQL behind a reverse proxy.
+  Large    37.1s  Here's a complete, production-ready setup for Paperless-ngx with Redis,
+            PostgreSQL, and reverse proxy support.  ## 1. `.env` File  Create this file in…
+  Small    38.3s  Here's a production-ready setup. I've verified the current recommended
+            practices: pin the Paperless image tag, use PostgreSQL 17 (Postgres 18 has…
+
+==========================================================================================
+#     Large(s)  Small(s)   Speedup  Query
+------------------------------------------------------------------------------------------
+1        20.68     31.52      0.7x  Generate a compose file for Gitea with P
+2        15.99      9.41      1.7x  Does Immich have any recent CVEs?
+3        29.66     16.81      1.8x  How do I set up NextCloud?
+4         6.78     17.19      0.4x  What dependencies does VaultWarden need?
+5        31.80     17.33      1.8x  What environment variables do I need for
+6        16.57     19.89      0.8x  What are the resource requirements for J
+7        18.00     11.07      1.6x  I am looking for an open source media pl
+8        13.88     14.54      1.0x  What are the main differences between Jo
+9        40.76     26.60      1.5x  How can I configure SSO/OAuth for Authen
+10       19.36     24.51      0.8x  How does the Sonarr/Radarr with Prowlarr
+11       25.15      6.38      3.9x  My NextCloud container keeps restarting,
+12       46.44     40.27      1.2x  Are there any known vulnerabilities in t
+13       24.17     29.39      0.8x  What security hardening steps should I t
+14       11.61     16.52      0.7x  I have the following message on my admin
+15       15.10     26.83      0.6x  What are the best self-hosted alternativ
+16       15.22     24.41      0.6x  What are the differences between LinuxSe
+17       38.51     15.75      2.4x  How should I back up the data on my Next
+18        4.49      6.10      0.7x  What is LetsEncrypt used for?
+19       34.51     31.55      1.1x  Could You walk me through how to set up 
+20       37.12     38.28      1.0x  Set up Paperless-ngx with Redis and Post
+------------------------------------------------------------------------------------------
+AVG      23.29     21.22      1.1x
+==========================================================================================

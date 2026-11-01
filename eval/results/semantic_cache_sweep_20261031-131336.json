@@ -1,0 +1,371 @@
+{
+  "meta": {
+    "timestamp": "20261031-131336",
+    "distance": "chroma l2 (squared L2)",
+    "embedding": "chromadb DefaultEmbeddingFunction",
+    "thresholds": [
+      0.15,
+      0.25,
+      0.35,
+      0.5
+    ],
+    "n_paraphrase": 20,
+    "n_unrelated": 20
+  },
+  "summary": [
+    {
+      "threshold": 0.15,
+      "paraphrase_hits": 7,
+      "paraphrase_wrong_hits": 0,
+      "paraphrase_total": 20,
+      "unrelated_false_hits": 0,
+      "unrelated_total": 20
+    },
+    {
+      "threshold": 0.25,
+      "paraphrase_hits": 16,
+      "paraphrase_wrong_hits": 0,
+      "paraphrase_total": 20,
+      "unrelated_false_hits": 0,
+      "unrelated_total": 20
+    },
+    {
+      "threshold": 0.35,
+      "paraphrase_hits": 17,
+      "paraphrase_wrong_hits": 0,
+      "paraphrase_total": 20,
+      "unrelated_false_hits": 0,
+      "unrelated_total": 20
+    },
+    {
+      "threshold": 0.5,
+      "paraphrase_hits": 20,
+      "paraphrase_wrong_hits": 0,
+      "paraphrase_total": 20,
+      "unrelated_false_hits": 1,
+      "unrelated_total": 20
+    }
+  ],
+  "rows": [
+    {
+      "kind": "paraphrase",
+      "query": "Write me a docker-compose setup for Gitea backed by Postgres",
+      "target_index": 0,
+      "nearest_index": 0,
+      "nearest_query": "Generate a compose file for Gitea with PostgreSQL",
+      "distance": 0.4967
+    },
+    {
+      "kind": "paraphrase",
+      "query": "Have any CVEs been reported for Immich lately?",
+      "target_index": 1,
+      "nearest_index": 1,
+      "nearest_query": "Does Immich have any recent CVEs?",
+      "distance": 0.2418
+    },
+    {
+      "kind": "paraphrase",
+      "query": "What are the steps to install Nextcloud?",
+      "target_index": 2,
+      "nearest_index": 2,
+      "nearest_query": "How do I set up NextCloud?",
+      "distance": 0.2317
+    },
+    {
+      "kind": "paraphrase",
+      "query": "Which dependencies are required to run Vaultwarden?",
+      "target_index": 3,
+      "nearest_index": 3,
+      "nearest_query": "What dependencies does VaultWarden need?",
+      "distance": 0.0985
+    },
+    {
+      "kind": "paraphrase",
+      "query": "Which env vars does WireGuard need to be configured?",
+      "target_index": 4,
+      "nearest_index": 4,
+      "nearest_query": "What environment variables do I need for WireGuard?",
+      "distance": 0.2433
+    },
+    {
+      "kind": "paraphrase",
+      "query": "How do Jellyfin and Plex compare in hardware requirements?",
+      "target_index": 5,
+      "nearest_index": 5,
+      "nearest_query": "What are the resource requirements for Jellyfin vs Plex?",
+      "distance": 0.3577
+    },
+    {
+      "kind": "paraphrase",
+      "query": "Is there an open-source media player that handles almost any video or audio format without installing extra codecs?",
+      "target_index": 6,
+      "nearest_index": 6,
+      "nearest_query": "I am looking for an open source media player that can play most videos or audios without requiring extra codecs.",
+      "distance": 0.1939
+    },
+    {
+      "kind": "paraphrase",
+      "query": "How do Obsidian and Joplin differ?",
+      "target_index": 7,
+      "nearest_index": 7,
+      "nearest_query": "What are the main differences between Joplin and Obsidian?",
+      "distance": 0.0583
+    },
+    {
+      "kind": "paraphrase",
+      "query": "How do I set up Authentik as an SSO/OAuth provider for my other self-hosted services?",
+      "target_index": 8,
+      "nearest_index": 8,
+      "nearest_query": "How can I configure SSO/OAuth for Authentik with my other self-hosted apps?",
+      "distance": 0.2199
+    },
+    {
+      "kind": "paraphrase",
+      "query": "How do Sonarr, Radarr, Prowlarr and Jellyfin fit together, and where does the media actually come from?",
+      "target_index": 9,
+      "nearest_index": 9,
+      "nearest_query": "How does the Sonarr/Radarr with Prowlarr and Jellyfin work? Where does someone source the media content?",
+      "distance": 0.3385
+    },
+    {
+      "kind": "paraphrase",
+      "query": "Why might my Nextcloud container be stuck in a restart loop?",
+      "target_index": 10,
+      "nearest_index": 10,
+      "nearest_query": "My NextCloud container keeps restarting, what could be the common causes for this?",
+      "distance": 0.1971
+    },
+    {
+      "kind": "paraphrase",
+      "query": "Does the newest Nextcloud release have any known security vulnerabilities?",
+      "target_index": 11,
+      "nearest_index": 11,
+      "nearest_query": "Are there any known vulnerabilities in the latest version of NextCloud?",
+      "distance": 0.1032
+    },
+    {
+      "kind": "paraphrase",
+      "query": "Once Vaultwarden is deployed, how should I harden it?",
+      "target_index": 12,
+      "nearest_index": 12,
+      "nearest_query": "What security hardening steps should I take after deploying VaultWarden?",
+      "distance": 0.1742
+    },
+    {
+      "kind": "paraphrase",
+      "query": "My Vaultwarden admin page warns: “You are using a plain text ADMIN_TOKEN which is insecure. Please generate a secure Argon2 PHC string by using vaultwarden hash or argon2.” What does this mean and how do I fix it?",
+      "target_index": 13,
+      "nearest_index": 13,
+      "nearest_query": "I have the following message on my admin dashboard for VaultWarden, what does it mean and what steps should I take? message: “You are using a plain text ADMIN_TOKEN which is insecure. Please generate a secure Argon2 PHC string by using vaultwarden hash or argon2.”",
+      "distance": 0.1109
+    },
+    {
+      "kind": "paraphrase",
+      "query": "Which self-hosted apps are the best replacements for Google Photos?",
+      "target_index": 14,
+      "nearest_index": 14,
+      "nearest_query": "What are the best self-hosted alternatives for Google Photos?",
+      "distance": 0.1331
+    },
+    {
+      "kind": "paraphrase",
+      "query": "How do LinuxServer.io container images differ from the official Docker images?",
+      "target_index": 15,
+      "nearest_index": 15,
+      "nearest_query": "What are the differences between LinuxServer.io images and the official docker images?",
+      "distance": 0.1054
+    },
+    {
+      "kind": "paraphrase",
+      "query": "What's the best way to back up my Nextcloud data, and should I schedule it with cron?",
+      "target_index": 16,
+      "nearest_index": 16,
+      "nearest_query": "How should I back up the data on my NextCloud instance ? What back up strategy is best and should I run a cron job for it?",
+      "distance": 0.1763
+    },
+    {
+      "kind": "paraphrase",
+      "query": "What does Let's Encrypt do?",
+      "target_index": 17,
+      "nearest_index": 17,
+      "nearest_query": "What is LetsEncrypt used for?",
+      "distance": 0.4399
+    },
+    {
+      "kind": "paraphrase",
+      "query": "Give me a full walkthrough for deploying Vaultwarden, including docker-compose files and TLS certificates. My domain and DNS are already set up.",
+      "target_index": 18,
+      "nearest_index": 18,
+      "nearest_query": "Could You walk me through how to set up VaultWarden? I need the complete walkthrough and docker-compose files. This includes setting up certificates for TLS. I already have a domain and configured the DNS.",
+      "distance": 0.1617
+    },
+    {
+      "kind": "paraphrase",
+      "query": "How do I deploy Paperless-ngx with Redis and Postgres behind a reverse proxy?",
+      "target_index": 19,
+      "nearest_index": 19,
+      "nearest_query": "Set up Paperless-ngx with Redis and PostgreSQL behind a reverse proxy.",
+      "distance": 0.1467
+    },
+    {
+      "kind": "unrelated",
+      "query": "Generate a compose file for Nextcloud with MariaDB",
+      "target_index": null,
+      "nearest_index": 0,
+      "nearest_query": "Generate a compose file for Gitea with PostgreSQL",
+      "distance": 0.7964
+    },
+    {
+      "kind": "unrelated",
+      "query": "How do I enable hardware transcoding in Jellyfin with an Intel GPU?",
+      "target_index": null,
+      "nearest_index": 5,
+      "nearest_query": "What are the resource requirements for Jellyfin vs Plex?",
+      "distance": 1.1409
+    },
+    {
+      "kind": "unrelated",
+      "query": "How do I import my Google Takeout photos into Immich?",
+      "target_index": null,
+      "nearest_index": 14,
+      "nearest_query": "What are the best self-hosted alternatives for Google Photos?",
+      "distance": 1.2729
+    },
+    {
+      "kind": "unrelated",
+      "query": "How do I add a second user to Vaultwarden and share a collection?",
+      "target_index": null,
+      "nearest_index": 18,
+      "nearest_query": "Could You walk me through how to set up VaultWarden? I need the complete walkthrough and docker-compose files. This includes setting up certificates for TLS. I already have a domain and configured the DNS.",
+      "distance": 1.0056
+    },
+    {
+      "kind": "unrelated",
+      "query": "How do I set up Pi-hole as the DNS server for my home network?",
+      "target_index": null,
+      "nearest_index": 2,
+      "nearest_query": "How do I set up NextCloud?",
+      "distance": 1.3854
+    },
+    {
+      "kind": "unrelated",
+      "query": "What is the difference between Traefik and Nginx Proxy Manager?",
+      "target_index": null,
+      "nearest_index": 15,
+      "nearest_query": "What are the differences between LinuxServer.io images and the official docker images?",
+      "distance": 1.4125
+    },
+    {
+      "kind": "unrelated",
+      "query": "How do I configure Uptime Kuma to send alerts to Discord?",
+      "target_index": null,
+      "nearest_index": 2,
+      "nearest_query": "How do I set up NextCloud?",
+      "distance": 1.6077
+    },
+    {
+      "kind": "unrelated",
+      "query": "How do I mount an NFS share inside a Docker container?",
+      "target_index": null,
+      "nearest_index": 18,
+      "nearest_query": "Could You walk me through how to set up VaultWarden? I need the complete walkthrough and docker-compose files. This includes setting up certificates for TLS. I already have a domain and configured the DNS.",
+      "distance": 1.3066
+    },
+    {
+      "kind": "unrelated",
+      "query": "What is the best way to update all my Docker containers automatically?",
+      "target_index": null,
+      "nearest_index": 10,
+      "nearest_query": "My NextCloud container keeps restarting, what could be the common causes for this?",
+      "distance": 1.2626
+    },
+    {
+      "kind": "unrelated",
+      "query": "How do I set up Home Assistant with Zigbee devices?",
+      "target_index": null,
+      "nearest_index": 8,
+      "nearest_query": "How can I configure SSO/OAuth for Authentik with my other self-hosted apps?",
+      "distance": 1.5239
+    },
+    {
+      "kind": "unrelated",
+      "query": "How do I expose a self-hosted service to the internet without opening ports, using Cloudflare Tunnel?",
+      "target_index": null,
+      "nearest_index": 19,
+      "nearest_query": "Set up Paperless-ngx with Redis and PostgreSQL behind a reverse proxy.",
+      "distance": 1.2667
+    },
+    {
+      "kind": "unrelated",
+      "query": "How much RAM does a Minecraft server need for ten players?",
+      "target_index": null,
+      "nearest_index": 5,
+      "nearest_query": "What are the resource requirements for Jellyfin vs Plex?",
+      "distance": 1.4839
+    },
+    {
+      "kind": "unrelated",
+      "query": "How do I configure Grafana to read metrics from Prometheus?",
+      "target_index": null,
+      "nearest_index": 4,
+      "nearest_query": "What environment variables do I need for WireGuard?",
+      "distance": 1.6412
+    },
+    {
+      "kind": "unrelated",
+      "query": "Generate a compose file for Gitea with SQLite",
+      "target_index": null,
+      "nearest_index": 0,
+      "nearest_query": "Generate a compose file for Gitea with PostgreSQL",
+      "distance": 0.3544
+    },
+    {
+      "kind": "unrelated",
+      "query": "Are there any known vulnerabilities in Jellyfin?",
+      "target_index": null,
+      "nearest_index": 5,
+      "nearest_query": "What are the resource requirements for Jellyfin vs Plex?",
+      "distance": 0.911
+    },
+    {
+      "kind": "unrelated",
+      "query": "How do I rotate Postgres passwords used by a docker-compose stack?",
+      "target_index": null,
+      "nearest_index": 18,
+      "nearest_query": "Could You walk me through how to set up VaultWarden? I need the complete walkthrough and docker-compose files. This includes setting up certificates for TLS. I already have a domain and configured the DNS.",
+      "distance": 1.2151
+    },
+    {
+      "kind": "unrelated",
+      "query": "What does a reverse proxy do?",
+      "target_index": null,
+      "nearest_index": 19,
+      "nearest_query": "Set up Paperless-ngx with Redis and PostgreSQL behind a reverse proxy.",
+      "distance": 1.4543
+    },
+    {
+      "kind": "unrelated",
+      "query": "How do I restore a Nextcloud backup onto a new server?",
+      "target_index": null,
+      "nearest_index": 16,
+      "nearest_query": "How should I back up the data on my NextCloud instance ? What back up strategy is best and should I run a cron job for it?",
+      "distance": 0.6554
+    },
+    {
+      "kind": "unrelated",
+      "query": "How do I set up Tailscale on my home server?",
+      "target_index": null,
+      "nearest_index": 2,
+      "nearest_query": "How do I set up NextCloud?",
+      "distance": 1.2181
+    },
+    {
+      "kind": "unrelated",
+      "query": "What are the best self-hosted alternatives for Google Drive?",
+      "target_index": null,
+      "nearest_index": 14,
+      "nearest_query": "What are the best self-hosted alternatives for Google Photos?",
+      "distance": 0.5513
+    }
+  ]
+}

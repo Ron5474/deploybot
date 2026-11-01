@@ -1,0 +1,26 @@
+[no-cache] Query 1: 23.82s
+[no-cache] Query 2: 11.01s
+[no-cache] Query 3: 31.19s
+[no-cache] Query 4: 12.66s
+[no-cache] Query 5: 17.30s
+[warm-up] Query 1: 0.67s
+[warm-up] Query 2: 0.61s
+[warm-up] Query 3: 10.26s
+[warm-up] Query 4: -9.50s
+[warm-up] Query 5: 0.61s
+[cached] Query 1: 0.00s
+[cached] Query 2: 0.00s
+[cached] Query 3: 0.00s
+[cached] Query 4: 0.00s
+[cached] Query 5: 0.00s
+
+--- Benchmark Results ---
+Query                                                          No Cache     Cached    Speedup
+--------------------------------------------------------------------------------------------
+Generate a compose file for Gitea with PostgreSQL                23.82s      0.00s   31781.7x
+Does Immich have any recent CVEs?                                11.01s      0.00s   24028.9x
+How do I set up NextCloud?                                       31.19s      0.00s   72226.8x
+What dependencies does VaultWarden need?                         12.66s      0.00s   34345.1x
+What environment variables do I need for WireGuard?              17.30s      0.00s   42321.4x
+--------------------------------------------------------------------------------------------
+Average                                                          19.20s      0.00s

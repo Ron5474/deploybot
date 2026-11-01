@@ -21,7 +21,6 @@ conversation_history.db-wal
 docs/
 PLAN.md
 FEATURES.md
-TECHNICAL.md
 slides.md
 
 
@@ -30,4 +29,3 @@ slides.md
 
 # Virtual environments
 .venv
-eval/results/

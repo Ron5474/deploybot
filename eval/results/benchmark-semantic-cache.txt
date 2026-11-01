@@ -1,0 +1,105 @@
+================================================================================
+SEMANTIC CACHE BENCHMARK
+================================================================================
+2026-08-24 12:49:39,629 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query  1:  19.07s | cached=False
+[warm] Query  1:   0.24s | cached=True
+2026-08-24 12:49:42,059 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+2026-08-24 12:49:52,077 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query  2:  13.02s | cached=False
+[warm] Query  2:   0.26s | cached=True
+2026-08-24 12:49:55,733 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+2026-08-24 12:50:24,144 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query  3:  34.19s | cached=False
+[warm] Query  3:   0.23s | cached=True
+2026-08-24 12:50:26,099 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+2026-08-24 12:50:36,190 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query  4:  13.10s | cached=False
+[warm] Query  4:   0.28s | cached=True
+2026-08-24 12:50:38,649 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+2026-08-24 12:50:57,391 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query  5:  22.60s | cached=False
+[warm] Query  5:   0.29s | cached=True
+2026-08-24 12:51:00,245 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+2026-08-24 12:51:25,471 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query  6:  30.29s | cached=False
+[warm] Query  6:   0.29s | cached=True
+2026-08-24 12:51:39,308 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query  7:  14.70s | cached=False
+[warm] Query  7:   0.29s | cached=True
+2026-08-24 12:51:54,270 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query  8:  16.08s | cached=False
+[warm] Query  8:   0.26s | cached=True
+2026-08-24 12:51:58,316 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+2026-08-24 12:52:02,623 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+2026-08-24 12:52:32,632 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query  9:  40.05s | cached=False
+[warm] Query  9:   0.22s | cached=True
+2026-08-24 12:53:05,601 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query 10:  32.76s | cached=False
+[warm] Query 10:   0.26s | cached=True
+2026-08-24 12:53:22,323 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query 11:  16.45s | cached=False
+[warm] Query 11:   0.25s | cached=True
+2026-08-24 12:53:24,583 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+2026-08-24 12:54:04,501 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query 12:  44.45s | cached=False
+[warm] Query 12:   0.28s | cached=True
+2026-08-24 12:54:28,830 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query 13:  25.72s | cached=False
+[warm] Query 13:   0.26s | cached=True
+2026-08-24 12:54:39,515 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query 14:  11.61s | cached=False
+[warm] Query 14:   0.25s | cached=True
+2026-08-24 12:54:43,646 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+2026-08-24 12:55:02,954 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query 15:  24.89s | cached=False
+[warm] Query 15:   0.27s | cached=True
+2026-08-24 12:55:29,626 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query 16:  28.86s | cached=False
+[warm] Query 16:   0.26s | cached=True
+2026-08-24 12:55:33,400 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+2026-08-24 12:55:39,224 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+2026-08-24 12:56:20,893 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query 17:  50.58s | cached=False
+[warm] Query 17:   0.23s | cached=True
+2026-08-24 12:56:29,030 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query 18:   7.92s | cached=False
+[warm] Query 18:   0.25s | cached=True
+2026-08-24 12:56:32,787 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+2026-08-24 12:57:18,019 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query 19:  48.80s | cached=False
+[warm] Query 19:   0.24s | cached=True
+2026-08-24 12:57:47,654 [TOOL] HTTP Request: POST <MODEL_BASE_URL>/chat/completions "HTTP/1.1 200 OK"
+[cold] Query 20:  29.32s | cached=False
+[warm] Query 20:   0.25s | cached=True
+
+--- Results ---
+Query                                                          Cold     Warm    Speedup
+----------------------------------------------------------------------------------------
+Generate a compose file for Gitea with PostgreSQL            19.07s    0.24s      79.0x
+Does Immich have any recent CVEs?                            13.02s    0.26s      50.3x
+How do I set up NextCloud?                                   34.19s    0.23s     148.9x
+What dependencies does VaultWarden need?                     13.10s    0.28s      47.3x
+What environment variables do I need for WireGuard?          22.60s    0.29s      78.5x
+What are the resource requirements for Jellyfin vs Plex?     30.29s    0.29s     104.0x
+I am looking for an open source media player that can pl     14.70s    0.29s      51.1x
+What are the main differences between Joplin and Obsidia     16.08s    0.26s      62.9x
+How can I configure SSO/OAuth for Authentik with my othe     40.05s    0.22s     180.0x
+How does the Sonarr/Radarr with Prowlarr and Jellyfin wo     32.76s    0.26s     127.4x
+My NextCloud container keeps restarting, what could be t     16.45s    0.25s      66.5x
+Are there any known vulnerabilities in the latest versio     44.45s    0.28s     161.3x
+What security hardening steps should I take after deploy     25.72s    0.26s      98.2x
+I have the following message on my admin dashboard for V     11.61s    0.25s      46.2x
+What are the best self-hosted alternatives for Google Ph     24.89s    0.27s      91.2x
+What are the differences between LinuxServer.io images a     28.86s    0.26s     110.3x
+How should I back up the data on my NextCloud instance ?     50.58s    0.23s     218.1x
+What is LetsEncrypt used for?                                 7.92s    0.25s      32.2x
+Could You walk me through how to set up VaultWarden? I n     48.80s    0.24s     202.9x
+Set up Paperless-ngx with Redis and PostgreSQL behind a      29.32s    0.25s     118.0x
+----------------------------------------------------------------------------------------
+Average                                                      26.22s    0.26s     101.9x
+Median per-query speedup                                                          98.2x
+
+Integrity: cold misses 20/20, warm hits 20/20 (of 20 queries)
+(A valid run needs cold misses = warm hits = all queries.)
