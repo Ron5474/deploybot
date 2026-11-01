@@ -155,6 +155,11 @@ User query:
 Draft answer:
 {response}
 
+Tool outputs the draft was based on:
+{evidence}
+
+CVE IDs, versions, dates and other facts in the tool outputs are verified. Keep them when the draft reports them correctly, and correct the draft where it contradicts them.
+
 Produce the final answer directly to the user.
 
 Improve:
@@ -167,7 +172,7 @@ Improve:
 
 Remove:
   - Fabricated details
-  - Unverified CVE IDs
+  - CVE IDs that appear neither in the tool outputs nor in well-known public records
   - Hardcoded secrets
   - Unsafe instructions
   - Meta-commentary about drafts, tools, review, or internal process

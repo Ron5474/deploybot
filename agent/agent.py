@@ -8,6 +8,7 @@ from langchain_core.callbacks import BaseCallbackHandler
 from langchain_community.cache import SQLiteCache
 from langchain.agents import create_agent
 import sqlite3
+import uuid
 from langgraph.checkpoint.sqlite import SqliteSaver
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [TOOL] %(message)s")
@@ -63,12 +64,30 @@ def build_history_messages(session_id):
     return messages
 
 
+# Cap on tool output handed to the reflection reviewer; web search and README
+# chunks can run to tens of thousands of characters.
+MAX_EVIDENCE_CHARS = 30_000
+
+
+def tool_evidence(messages):
+    """Tool outputs from the latest turn (everything after the last human
+    message), formatted for the reviewer."""
+    last_human = max((i for i, m in enumerate(messages) if m.type == "human"), default=-1)
+    outputs = [m for m in messages[last_human + 1:] if m.type == "tool"]
+    if not outputs:
+        return "(no tools were called)"
+    text = "\n\n".join(f"[{m.name}]\n{m.content}" for m in outputs)
+    return text[:MAX_EVIDENCE_CHARS]
+
+
 def run_with_reflection(user_query, session_id="default", client_id=""):
     history = build_history_messages(session_id)
     result = agent.invoke({"messages": history + [("human", user_query)]}, config={"configurable": {"thread_id": session_id}, "callbacks": [ToolLogger()]})
     initial_response = result["messages"][-1].content
 
-    reflection_prompt = SELF_REFLECTION_PROMPT.format(query=user_query, response=initial_response)
+    # The reviewer has no tools, so it gets the draft's tool outputs as
+    # evidence; without them it strips CVEs and versions it can't verify.
+    reflection_prompt = SELF_REFLECTION_PROMPT.format(query=user_query, response=initial_response, evidence=tool_evidence(result["messages"]))
     reflected = llm.invoke([SystemMessage(content=SYSTEM_PROMPT), HumanMessage(content=reflection_prompt)])
     save_message(session_id, "human", user_query, client_id)
     save_message(session_id, "assistant", reflected.content, client_id)
@@ -80,9 +99,14 @@ def run_with_chaining(user_query, session_id="default", client_id=""):
     services_needed = llm.invoke([sys, HumanMessage(content=PROMPT_CHAIN_STEPS["step1"].format(query=user_query))])
     services = services_needed.content
 
-    # Step 2 - Generate individual service blocks
-    blocks_needed = llm.invoke([sys, HumanMessage(content=PROMPT_CHAIN_STEPS["step2"].format(services=services, query=user_query))])
-    blocks = blocks_needed.content
+    # Step 2 - Generate individual service blocks. Runs through the agent so it
+    # can look up current image tags and env vars. Its own throwaway thread
+    # keeps the step prompt out of the user's conversation memory.
+    blocks_needed = agent.invoke(
+        {"messages": [("human", PROMPT_CHAIN_STEPS["step2"].format(services=services, query=user_query))]},
+        config={"configurable": {"thread_id": f"{session_id}-chain-{uuid.uuid4().hex[:8]}"}, "callbacks": [ToolLogger()]},
+    )
+    blocks = blocks_needed["messages"][-1].content
 
     # Step 3 - Combine into full compose file
     compose = llm.invoke([sys, HumanMessage(content=PROMPT_CHAIN_STEPS["step3"].format(service_blocks=blocks))])
@@ -97,10 +121,11 @@ def run_with_chaining(user_query, session_id="default", client_id=""):
 def run_with_meta_prompting(user_query, session_id="default", client_id=""):
     history = build_history_messages(session_id)
     prompt = META_PROMPT.format(query=user_query)
-    result = llm.invoke([SystemMessage(content=SYSTEM_PROMPT)] + history + [HumanMessage(content=prompt)])
+    result = agent.invoke({"messages": history + [("human", prompt)]}, config={"configurable": {"thread_id": session_id}, "callbacks": [ToolLogger()]})
+    answer = result["messages"][-1].content
     save_message(session_id, "human", user_query, client_id)
-    save_message(session_id, "assistant", result.content, client_id)
-    return result.content
+    save_message(session_id, "assistant", answer, client_id)
+    return answer
     
 
 
