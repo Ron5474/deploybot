@@ -8,6 +8,7 @@ from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 for var in ("MODEL_BASE_URL", "MODEL_API_KEY", "MODEL_NAME", "SMALL_MODEL_NAME", "SMALL_MODEL_API_KEY"):
     os.environ.setdefault(var, "test")
 os.environ.setdefault("DISABLE_CACHE", "1")
+os.environ["LANGFUSE_TRACING_ENABLED"] = "false"
 
 import agent.agent as agent_mod  # noqa: E402
 
@@ -29,7 +30,7 @@ class FakeLLM:
         self.reply = reply
         self.prompts = []
 
-    def invoke(self, messages):
+    def invoke(self, messages, config=None):
         self.prompts.append(messages)
         return AIMessage(content=self.reply)
 

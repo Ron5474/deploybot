@@ -40,6 +40,8 @@ Judge model env vars (default to the app's main model):
 """
 import os
 os.environ["DISABLE_CACHE"] = "1"
+# Eval calls go through the traced endpoints; keep them out of production views.
+os.environ.setdefault("LANGFUSE_TRACING_ENVIRONMENT", "eval")
 
 import logging
 logging.disable(logging.CRITICAL)

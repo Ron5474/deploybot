@@ -70,6 +70,10 @@ When the assistant returns a docker-compose file, a checklist is automatically g
 
 Repeated identical prompts are served from a local SQLite cache, skipping the LLM entirely.
 
+### Langfuse Tracing
+
+When Langfuse keys are set, every chat turn is sent to Langfuse as one trace (`agent/tracing.py`): the user message and the redacted answer at the root, then the agent loop, each LLM call with model and token usage, and each tool call. Traces are named per strategy (`chat-regular`, `chat-reflection`, `chat-chaining`, `chat-meta`, `generate-checklist`), tagged with the strategy, grouped into a session per conversation, and attributed to the browser's client ID. Exported spans go through the same secret redaction as chat output. Without keys, tracing is off.
+
 ### Semantic Cache (benchmarked, not in the request path)
 
 `rag/semantic_cache.py` is a ChromaDB-based semantic caching layer: it returns a stored response when a new query is close enough to a cached one (distance threshold). It is exercised only by `eval/benchmark_semantic_cache.py`, which measures cold vs. warm latency. It is not yet wired into `/chat`.
@@ -218,6 +222,9 @@ Copy `.env.example` to `.env` and fill in the values below.
 | `TAVILY_TOKEN` | Yes | Tavily API key for web search |
 | `GITHUB_ACCESS_TOKEN` | Scraper only | GitHub token for fetching app READMEs (`read:public_repo` scope) |
 | `DISABLE_CACHE` | No | Set to any value to disable the LangChain SQLite cache |
+| `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` | No | Langfuse project API keys; tracing is off when unset |
+| `LANGFUSE_BASE_URL` | With Langfuse | Langfuse server URL (cloud region or self-hosted) |
+| `LANGFUSE_TRACING_ENVIRONMENT` | No | Environment label on traces, e.g. `production`; `eval/strategy_eval.py` uses `eval` |
 
 ---
 

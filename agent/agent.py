@@ -27,6 +27,7 @@ from tools.cve_tool import retrieve_cve
 from rag.retriever import get_info_from_vector_db
 from agent.prompts import SYSTEM_PROMPT, SELF_REFLECTION_PROMPT, PROMPT_CHAIN_STEPS, META_PROMPT
 from db.conversations import get_history, save_message
+from agent.tracing import NO_TRACE
 
 
 load_dotenv()
@@ -40,7 +41,8 @@ tools = [query_app_db, web_search, retrieve_cve, get_info_from_vector_db]
 
 if not os.environ.get("DISABLE_CACHE"):
     set_llm_cache(SQLiteCache(database_path=".langchain_cache.db"))
-llm = ChatOpenAI(base_url=MODEL_URL, api_key=MODEL_API_KEY, model=MODEL_NAME, timeout=60, max_retries=1)
+# stream_usage: report token counts on streamed /chat responses too, for tracing.
+llm = ChatOpenAI(base_url=MODEL_URL, api_key=MODEL_API_KEY, model=MODEL_NAME, timeout=60, max_retries=1, stream_usage=True, name="call-model")
 
 conn = sqlite3.connect("conversation_history.db", check_same_thread=False)
 memory = SqliteSaver(conn)
@@ -49,7 +51,7 @@ agent = create_agent(llm, tools, system_prompt=SYSTEM_PROMPT, checkpointer=memor
 SMALL_MODEL_NAME = os.environ["SMALL_MODEL_NAME"]
 SMALL_MODEL_API_KEY = os.environ["SMALL_MODEL_API_KEY"]
 
-small_llm = ChatOpenAI(base_url=MODEL_URL, api_key=SMALL_MODEL_API_KEY, model=SMALL_MODEL_NAME, timeout=60, max_retries=1)
+small_llm = ChatOpenAI(base_url=MODEL_URL, api_key=SMALL_MODEL_API_KEY, model=SMALL_MODEL_NAME, timeout=60, max_retries=1, stream_usage=True, name="call-model")
 small_agent = create_agent(small_llm, tools, system_prompt=SYSTEM_PROMPT, checkpointer=memory)
 
 
@@ -80,23 +82,23 @@ def tool_evidence(messages):
     return text[:MAX_EVIDENCE_CHARS]
 
 
-def run_with_reflection(user_query, session_id="default", client_id=""):
+def run_with_reflection(user_query, session_id="default", client_id="", turn=NO_TRACE):
     history = build_history_messages(session_id)
-    result = agent.invoke({"messages": history + [("human", user_query)]}, config={"configurable": {"thread_id": session_id}, "callbacks": [ToolLogger()]})
+    result = agent.invoke({"messages": history + [("human", user_query)]}, config=turn.config("draft-answer-agent", configurable={"thread_id": session_id}, callbacks=[ToolLogger()]))
     initial_response = result["messages"][-1].content
 
     # The reviewer has no tools, so it gets the draft's tool outputs as
     # evidence; without them it strips CVEs and versions it can't verify.
     reflection_prompt = SELF_REFLECTION_PROMPT.format(query=user_query, response=initial_response, evidence=tool_evidence(result["messages"]))
-    reflected = llm.invoke([SystemMessage(content=SYSTEM_PROMPT), HumanMessage(content=reflection_prompt)])
+    reflected = llm.invoke([SystemMessage(content=SYSTEM_PROMPT), HumanMessage(content=reflection_prompt)], config=turn.config("review-draft"))
     save_message(session_id, "human", user_query, client_id)
     save_message(session_id, "assistant", reflected.content, client_id)
     return reflected.content
 
-def run_with_chaining(user_query, session_id="default", client_id=""):
+def run_with_chaining(user_query, session_id="default", client_id="", turn=NO_TRACE):
     # Step 1 - Identify the required services
     sys = SystemMessage(content=SYSTEM_PROMPT)
-    services_needed = llm.invoke([sys, HumanMessage(content=PROMPT_CHAIN_STEPS["step1"].format(query=user_query))])
+    services_needed = llm.invoke([sys, HumanMessage(content=PROMPT_CHAIN_STEPS["step1"].format(query=user_query))], config=turn.config("identify-services"))
     services = services_needed.content
 
     # Step 2 - Generate individual service blocks. Runs through the agent so it
@@ -104,24 +106,24 @@ def run_with_chaining(user_query, session_id="default", client_id=""):
     # keeps the step prompt out of the user's conversation memory.
     blocks_needed = agent.invoke(
         {"messages": [("human", PROMPT_CHAIN_STEPS["step2"].format(services=services, query=user_query))]},
-        config={"configurable": {"thread_id": f"{session_id}-chain-{uuid.uuid4().hex[:8]}"}, "callbacks": [ToolLogger()]},
+        config=turn.config("write-service-blocks-agent", configurable={"thread_id": f"{session_id}-chain-{uuid.uuid4().hex[:8]}"}, callbacks=[ToolLogger()]),
     )
     blocks = blocks_needed["messages"][-1].content
 
     # Step 3 - Combine into full compose file
-    compose = llm.invoke([sys, HumanMessage(content=PROMPT_CHAIN_STEPS["step3"].format(service_blocks=blocks))])
+    compose = llm.invoke([sys, HumanMessage(content=PROMPT_CHAIN_STEPS["step3"].format(service_blocks=blocks))], config=turn.config("assemble-compose"))
     compose_file = compose.content
 
     # Step 4 - Security Hardening
-    hardened = llm.invoke([sys, HumanMessage(content=PROMPT_CHAIN_STEPS["step4"].format(compose_file=compose_file))])
+    hardened = llm.invoke([sys, HumanMessage(content=PROMPT_CHAIN_STEPS["step4"].format(compose_file=compose_file))], config=turn.config("harden-compose"))
     save_message(session_id, "human", user_query, client_id)
     save_message(session_id, "assistant", hardened.content, client_id)
     return hardened.content
 
-def run_with_meta_prompting(user_query, session_id="default", client_id=""):
+def run_with_meta_prompting(user_query, session_id="default", client_id="", turn=NO_TRACE):
     history = build_history_messages(session_id)
     prompt = META_PROMPT.format(query=user_query)
-    result = agent.invoke({"messages": history + [("human", prompt)]}, config={"configurable": {"thread_id": session_id}, "callbacks": [ToolLogger()]})
+    result = agent.invoke({"messages": history + [("human", prompt)]}, config=turn.config("run-agent", configurable={"thread_id": session_id}, callbacks=[ToolLogger()]))
     answer = result["messages"][-1].content
     save_message(session_id, "human", user_query, client_id)
     save_message(session_id, "assistant", answer, client_id)
