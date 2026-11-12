@@ -109,6 +109,48 @@ Hosting large models is expensive. During development, this points at Ollama run
 
 The app catalog is a ~400-row read-mostly dataset. SQLite is zero-infrastructure, ships inside the Docker image, persists across restarts via a volume mount, and performs well for this scale. The agent generates SQL against it, and `sqlparse` enforces SELECT-only access at the tool level.
 
+### 2.4 Observability: Langfuse Tracing
+
+Every request to a chat endpoint or `/checklist` is traced to Langfuse (`agent/tracing.py`), using the Langfuse Python SDK v5 and its LangChain `CallbackHandler`. The server is a self-hosted Langfuse v4 instance; SDK v5 needs a v4 server.
+
+**Trace structure.** One trace per chat turn, following Langfuse's guidance that a chatbot gets one trace per turn and one session per conversation:
+
+```
+chat-regular                      span: input = user message, output = redacted answer
+└── run-agent                     agent: the LangGraph ReAct run
+    ├── model → call-model        generation: model name + token usage
+    ├── tools → retrieve_cve      tool: arguments + raw output
+    └── model → call-model        generation: the final answer
+```
+
+| Trace name | Endpoint | Named steps under the root |
+|---|---|---|
+| `chat-regular` | `/chat` | `run-agent` |
+| `chat-meta` | `/chat/meta` | `run-agent` |
+| `chat-reflection` | `/chat/reflect` | `draft-answer-agent` → `review-draft` |
+| `chat-chaining` | `/chat/chain` | `identify-services` → `write-service-blocks-agent` → `assemble-compose` → `harden-compose` |
+| `generate-checklist` | `/checklist` | `generate-checklist` |
+
+Names are fixed, verb-first, and never include the model or a per-request value, so Langfuse filters, dashboards and evaluators that target them keep working when the model changes. The LLM client is named `call-model` so generations inside the agent loop are not labelled `ChatOpenAI`. Agent runs end in `-agent` because the handler types a LangChain chain as an `agent` observation only when its name contains "agent".
+
+**Attributes on every trace:**
+
+- `session_id`: the conversation's session id, so a conversation replays in Langfuse's Sessions view.
+- `user_id`: the browser's `client_id`.
+- Tag: the strategy (`regular`, `meta`, `reflection`, `chaining`, `checklist`), for per-strategy filtering and dashboards.
+- Root metadata: endpoint, strategy, model, and `output_redacted` (whether the output guardrail changed the answer, see §10). A failed request is marked `ERROR`; a stream the client abandoned is closed with what was sent and `client_disconnected`.
+- Environment: `LANGFUSE_TRACING_ENVIRONMENT` (for example `production`). `eval/strategy_eval.py` sets `eval`, so eval traffic stays out of production views.
+
+**Token usage on the stream.** `/chat` streams, and an OpenAI-compatible API only reports usage on a stream when asked, so the chat models are created with `stream_usage=True`. Langfuse does not compute cost: `main` is a provider alias with no entry in Langfuse's model price table. A custom model price in Langfuse would add it.
+
+**Why the root is not the "current" span.** The Langfuse SDK normally nests observations through the active OpenTelemetry context. The `/chat` response is a generator that Starlette advances from a fresh context on each chunk, so a context manager held open across `yield`s would attach and detach in different contexts. Instead each request starts its root with `start_observation()` and gives the `CallbackHandler` that span's ids as `trace_context`; every LangChain call made for the request attaches under it. Session, user and tags reach the LangChain observations through `langfuse_*` keys in the run's metadata. The same `Turn` object serves the streaming and non-streaming endpoints.
+
+**Secret masking.** The Langfuse client is created with a `mask_otel_spans` hook that runs every exported span attribute through `redact_secrets` from the output guardrail (§10). Prompts contain tool output and conversation history, so a credential that reaches the context would otherwise be exported in the trace even when the answer itself is redacted. Input, output and metadata attributes are JSON-encoded, so the hook decodes them, redacts each string, and re-encodes, keeping the JSON valid.
+
+**Off by default.** Tracing is on only when `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` are set and `LANGFUSE_TRACING_ENABLED` is not `false`. Without keys every strategy runs with a no-op `Turn`, and the tests run that way. The SDK sends spans in the background and flushes on exit.
+
+**Not covered:** tool errors that are returned as text (the SQL tool returns `Query error: …`) are not marked as errors in the trace, and the internal LangGraph `model`/`tools` chain nodes appear between the agent and its generations and tool calls.
+
 ---
 
 ## 3. Environment & Infrastructure
@@ -134,6 +176,7 @@ DeployBot is designed to run on commodity hardware — a CPU-only VPS or a Raspb
 | `tavily-python` | Web search API client |
 | `sqlparse` | SQL statement type validation (prevents write operations) |
 | `python-dotenv` | Environment variable loading from `.env` |
+| `langfuse` | Tracing to Langfuse (SDK v5, LangChain `CallbackHandler`) |
 | `react` 19 | UI framework |
 | `react-markdown` + `remark-gfm` | Bot message rendering with GFM support |
 | `react-syntax-highlighter` | Syntax-highlighted code blocks |
@@ -152,6 +195,10 @@ All secrets and runtime settings live in a `.env` file:
 | `TAVILY_TOKEN` | Yes | Tavily web search API key |
 | `GITHUB_ACCESS_TOKEN` | Scraper only | GitHub API token for README fetching |
 | `DISABLE_CACHE` | No | Any value disables LangChain SQLite cache (used in evals) |
+| `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` | No | Langfuse project keys; tracing is off when unset (§2.4) |
+| `LANGFUSE_BASE_URL` | With Langfuse | Langfuse server URL |
+| `LANGFUSE_TRACING_ENVIRONMENT` | No | Environment label on traces; `eval/strategy_eval.py` uses `eval` |
+| `LANGFUSE_TRACING_ENABLED` | No | `false` turns tracing off even with keys set |
 
 ---
 
@@ -848,6 +895,8 @@ The sidebar collapses to a 48 px icon strip via CSS width transition. Client ide
 **FastAPI:** A Python ASGI web framework. Used here for its `StreamingResponse` support (critical for token streaming), automatic OpenAPI doc generation, and async-native design.
 
 **LangChain `SQLiteCache`:** An exact-match LLM response cache backed by SQLite. Caches responses keyed on a hash of the full prompt. On a hit, bypasses the LLM entirely. Zero false-positive risk but only helps for repeated identical prompts.
+
+**Langfuse:** An open-source LLM observability platform. Stores traces of LLM applications as trees of observations (generations, tool calls, agent runs) grouped into sessions, with token usage, latency and cost. Used here to trace every chat turn (§2.4).
 
 **LangGraph:** A library for building stateful multi-actor applications with LLMs using a graph-based execution model. `create_react_agent` provides a production-quality ReAct loop with checkpointing, streaming, and tool routing built in.
 

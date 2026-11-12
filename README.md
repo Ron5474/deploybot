@@ -183,11 +183,21 @@ Open `http://localhost:8000`.
 
 ## Docker
 
-### Build and run locally
+### Run
+
+Every push to `main` runs the tests, then builds the image and publishes it to `ghcr.io/ron5474/deploybot:latest` (`.github/workflows/docker.yml`). `docker-compose.yml` runs that image, so Watchtower picks up new versions.
 
 ```bash
 cp .env.example .env   # fill in your keys first
-docker-compose up --build
+docker compose pull
+docker compose up -d
+```
+
+To run local changes instead, build the image under the same name first:
+
+```bash
+docker build -t ghcr.io/ron5474/deploybot:latest .
+docker compose up -d
 ```
 
 Open `http://localhost:8000`.

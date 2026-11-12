@@ -5,7 +5,7 @@ from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 
 # agent.agent reads these at import time; the fakes below mean no request is
 # ever sent, so placeholder values are enough.
-for var in ("MODEL_BASE_URL", "MODEL_API_KEY", "MODEL_NAME", "SMALL_MODEL_NAME", "SMALL_MODEL_API_KEY"):
+for var in ("MODEL_BASE_URL", "MODEL_API_KEY", "MODEL_NAME", "SMALL_MODEL_NAME", "SMALL_MODEL_API_KEY", "TAVILY_TOKEN"):
     os.environ.setdefault(var, "test")
 os.environ.setdefault("DISABLE_CACHE", "1")
 os.environ["LANGFUSE_TRACING_ENABLED"] = "false"

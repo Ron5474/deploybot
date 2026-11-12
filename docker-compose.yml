@@ -1,6 +1,8 @@
 services:
   deploybot:
-    build: .
+    # Built and pushed by .github/workflows/docker.yml; Watchtower pulls updates.
+    # To build locally instead: docker build -t ghcr.io/ron5474/deploybot:latest .
+    image: ghcr.io/ron5474/deploybot:latest
     ports:
       - "8000:8000"
     volumes:
